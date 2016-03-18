@@ -1,0 +1,26 @@
+apply from: "${cacheConfigs}/gradle/library.gradle"
+apply plugin: 'com.neenbedankt.android-apt'
+
+android {
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile project(':sqlbrite-wrapper')
+
+    apt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
+    compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
+    compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
+
+    testCompile test.junit
+    testCompile test.robolectric
+}
+
+group = "com.zen.android.lib"
+ext.deployName = 'sqlbrite-dbflow'
+apply from: "${cacheConfigs}/gradle/upload.gradle"

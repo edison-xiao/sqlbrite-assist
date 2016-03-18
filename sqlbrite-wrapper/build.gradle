@@ -1,0 +1,21 @@
+apply from: "${cacheConfigs}/gradle/library.gradle"
+
+android {
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile clib.sqlbrite
+
+    testCompile test.junit
+    testCompile test.robolectric
+}
+
+group = "com.zen.android.lib"
+ext.deployName = 'sqlbrite'
+apply from: "${cacheConfigs}/gradle/upload.gradle"

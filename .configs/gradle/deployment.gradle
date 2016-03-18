@@ -1,0 +1,13 @@
+// ！该文件是从远程拉取的模板，请勿修改
+// 
+// update: 2016021701
+
+ext {
+    isSnapshot = this.version.endsWith("-SNAPSHOT");
+
+    deployLocalRepo = "file:///e:/repo"
+    deployReleaseUrl = deployLocalRepo
+    deploySnapshotUrl = deployLocalRepo
+    nexusUsername = ""
+    nexusPassword = ""
+}

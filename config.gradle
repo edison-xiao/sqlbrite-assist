@@ -1,0 +1,50 @@
+allprojects {
+    ext {
+        getPropertyOrDefault = { key, defValue ->
+            if (project.getProperties().containsKey(key)) {
+                return project.getProperties().get(key)
+            } else {
+                return defValue
+            }
+        }
+
+        downloadFile = { localFile, url ->
+            if (!localFile.exists()) {
+                new URL(url).withInputStream { i -> localFile.withOutputStream { it << i } }
+            }
+        }
+
+        cacheConfigsDir = getPropertyOrDefault("CONFIG_CACHE", ".configs")
+        cacheConfigs = "${rootDir}/${cacheConfigsDir}"
+//        remoteConfigsUrl = "${CONFIG_URL}/"
+    }
+}
+
+//task prepareConfigCache {
+//    def localPath = cacheConfigs
+//    def remoteUrl = remoteConfigsUrl
+//
+//    def cacheFiles = [
+//            ["checkstyle/", "nd_checkstyle.xml", "nd_checkstyle_suppressions.xml"],
+//            ["gradle/", "android.gradle", "androidJarBuild.gradle", "application.gradle", "checkstyle.gradle", "dependencies.gradle", "deployment.gradle", "dexcount.gradle", "findbugs.gradle", "jacoco.gradle", "library.gradle", "librarySimplify.gradle", "retrolambda.gradle", "sonar.gradle", "upload.gradle", "uploadJar.gradle", "sign.gradle"],
+//            ["findbugs/", "findbugs-filter.xml"],
+//            ["custom/", "application.gradle", "library.gradle", "base.gradle"],
+//            ["custom/sign/", ".gitignore", "sign.properties"]
+//    ]
+//
+//    cacheFiles.each { files ->
+//        def subDir = files[0]
+//        def dir = new File("${localPath}/${subDir}")
+//        if (!dir.exists()) {
+//            dir.mkdirs()
+//            println "create " + dir.absolutePath
+//        }
+//
+//        // remote dir
+//        files = files - files[0]
+//        files.each { file ->
+//            def localFile = new File(dir, file)
+//            downloadFile(localFile, remoteUrl + subDir + file)
+//        }
+//    }
+//}
