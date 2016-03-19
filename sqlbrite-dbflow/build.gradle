@@ -21,6 +21,4 @@ dependencies {
     testCompile test.robolectric
 }
 
-group = "com.zen.android.lib"
-ext.deployName = 'sqlbrite-dbflow'
-apply from: "${cacheConfigs}/gradle/upload.gradle"
+apply from: "${cacheConfigs}/gradle/android-artifacts.gradle"
