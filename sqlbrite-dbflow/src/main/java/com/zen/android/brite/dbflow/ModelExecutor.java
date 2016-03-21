@@ -29,8 +29,6 @@ class ModelExecutor<T extends BaseModel> {
 
     @SuppressWarnings("unchecked")
     public ModelExecutor(Class<T> clazz) {
-        DbflowDataProvider.readyProvider();
-
         mAdapter = FlowManager.getModelAdapter(clazz);
         mTableName = getTableNameBase(mAdapter);
         String dbName = FlowManager.getDatabaseForTable(mAdapter.getModelClass()).getDatabaseName();
@@ -198,7 +196,7 @@ class ModelExecutor<T extends BaseModel> {
         mAdapter.updateAutoIncrement(model, id);
     }
 
-    private static String getTableNameBase(ModelAdapter adapter) {
+    static String getTableNameBase(ModelAdapter adapter) {
         String tableName = adapter.getTableName();
         if (tableName.startsWith("`")) {
             return tableName.substring(1, tableName.length() - 1);
