@@ -18,19 +18,9 @@ import java.lang.reflect.Method;
  * @author zen
  * @version 2016/3/1
  */
-class DbflowDataProvider implements BriteDataProvider {
+enum DbflowDataProvider implements BriteDataProvider {
 
-    private static boolean hasReady = false;
-
-    /**
-     * 省去调用初始化去注册的方式，在使用具体方法前需要验证是否已安装Provider
-     */
-    static void readyProvider() {
-        if (!hasReady) {
-            hasReady = true;
-            Brite.setupProviders(new DbflowDataProvider());
-        }
-    }
+    INSTANCE;
 
     @Override
     public SQLiteOpenHelper findDatabaseByName(String dbName) {

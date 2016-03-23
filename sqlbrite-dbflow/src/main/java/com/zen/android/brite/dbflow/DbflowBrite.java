@@ -21,13 +21,23 @@ import rx.Observable;
  */
 public class DbflowBrite {
 
+    static {
+        Brite.setupProviders(DbflowDataProvider.INSTANCE);
+    }
+
     public static class Query<T extends BaseModel> extends Brite.Query<T> {
 
         private Class<T> mClazz;
 
+        public static <T extends BaseModel> Query<T> from(@NonNull Class<T> clazz) {
+            ModelAdapter<T> adapter = FlowManager.getModelAdapter(clazz);
+            String table = ModelExecutor.getTableNameBase(adapter);
+            String dbName = FlowManager.getDatabaseForTable(clazz).getDatabaseName();
+            return new Query<>(dbName, table, clazz);
+        }
+
         public static <T extends BaseModel> Query<T> from(
                 @NonNull String dbName, @NonNull String table, @NonNull Class<T> clazz) {
-            DbflowDataProvider.readyProvider();
             return new Query<>(dbName, table, clazz);
         }
 
