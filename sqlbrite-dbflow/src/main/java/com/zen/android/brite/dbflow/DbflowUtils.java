@@ -29,6 +29,21 @@ public class DbflowUtils {
     }
 
     @CheckResult
+    public static <T extends BaseModel> T loadFromCursor(Class<T> clazz, Cursor cursor) {
+        if (cursor != null) {
+            try {
+                if (cursor.moveToFirst()) {
+                    ModelAdapter<T> adapter = FlowManager.getModelAdapter(clazz);
+                    return adapter.loadFromCursor(cursor);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        return null;
+    }
+
+    @CheckResult
     public static <T extends BaseModel> List<T> loadListFromCursor(
             Class<T> clazz, Cursor cursor, List<T> result) {
         return loadListFromCursor(clazz, cursor, result, true);
