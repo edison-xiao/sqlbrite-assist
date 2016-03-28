@@ -1,5 +1,6 @@
 package com.zen.android.brite.dbflow;
 
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
@@ -54,6 +55,10 @@ public class DbflowBrite {
 
         public Observable<List<T>> queryModels() {
             return query().map(query -> DbflowUtils.loadListFromCursor(mClazz, query.run(), new ArrayList<>()));
+        }
+
+        public Observable<T> querySingle() {
+            return query().map(query -> DbflowUtils.loadFromCursor(mClazz, query.run()));
         }
     }
 
