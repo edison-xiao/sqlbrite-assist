@@ -4,7 +4,7 @@
 
 ext {
     //Android
-    androidBuildToolsVersion = "23.0.2"
+    androidBuildToolsVersion = "22.0.1"
     androidMinSdkVersion = getPropertyOrDefault("MIN_SDK_VERSION", 9)
     androidTargetSdkVersion = getPropertyOrDefault("TARGET_SDK_VERSION", 22)
     androidCompileSdkVersion = 23
@@ -32,9 +32,6 @@ ext {
     dexmakerVersion = '1.0'
     espressoVersion = '2.0'
     testingSupportLibVersion = '0.1'
-
-    //Hermes
-    hermesVersion = '2.2.3-rc2'
 
     libs = [
             supportV4          : "com.android.support:support-v4:${androidSupportVersion}",
