@@ -33,9 +33,6 @@ ext {
     espressoVersion = '2.0'
     testingSupportLibVersion = '0.1'
 
-    //Hermes
-    hermesVersion = '2.2.3-rc2'
-
     libs = [
             supportV4          : "com.android.support:support-v4:${androidSupportVersion}",
             appcompat          : "com.android.support:appcompat-v7:${androidSupportVersion}",
