@@ -1,7 +1,7 @@
 // 自定义的基础配置脚本
 //
 ext {
-    dbflow_version = '3.0.0-beta3'
+    dbflow_version = '3.0.0-beta6'
     clib = [
             sqlbrite: 'com.squareup.sqlbrite:sqlbrite:0.6.0',
 

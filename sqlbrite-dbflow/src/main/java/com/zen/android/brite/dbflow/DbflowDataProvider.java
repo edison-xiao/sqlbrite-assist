@@ -3,7 +3,7 @@ package com.zen.android.brite.dbflow;
 import android.content.ContentResolver;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.raizlabs.android.dbflow.config.BaseDatabaseDefinition;
+import com.raizlabs.android.dbflow.config.DatabaseDefinition;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.structure.database.OpenHelper;
 import com.zen.android.brite.Brite;
@@ -32,10 +32,10 @@ enum DbflowDataProvider implements BriteDataProvider {
         return null;
     }
 
-    private SQLiteOpenHelper getSQLiteOpenHelper(BaseDatabaseDefinition definition) {
+    private SQLiteOpenHelper getSQLiteOpenHelper(DatabaseDefinition definition) {
         SQLiteOpenHelper helper = null;
         try {
-            Method method = BaseDatabaseDefinition.class.getDeclaredMethod("getHelper");
+            Method method = DatabaseDefinition.class.getDeclaredMethod("getHelper");
             method.setAccessible(true);
             OpenHelper openHelper = (OpenHelper) method.invoke(definition);
             if (openHelper instanceof SQLiteOpenHelper) {
