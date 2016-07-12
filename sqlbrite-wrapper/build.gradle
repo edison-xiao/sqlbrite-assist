@@ -13,6 +13,7 @@ dependencies {
     compile clib.sqlbrite
 
     testCompile test.junit
+    testCompile test.mockito
     testCompile test.robolectric
 }
 

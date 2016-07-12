@@ -2,6 +2,8 @@ package com.zen.android.brite;
 
 import android.content.ContentResolver;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * BriteDataProvider
@@ -11,8 +13,10 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public interface BriteDataProvider {
 
-    SQLiteOpenHelper findDatabaseByName(String dbName);
+    @Nullable
+    SQLiteOpenHelper findDatabaseByName(@NonNull String dbName);
 
-    ContentResolver findContentProviderByName(String dbName);
+    @Nullable
+    ContentResolver findContentProviderByName(@NonNull String dbName);
 
 }
