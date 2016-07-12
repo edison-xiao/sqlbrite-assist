@@ -6,11 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.raizlabs.android.dbflow.config.DatabaseDefinition;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.structure.database.OpenHelper;
-import com.zen.android.brite.Brite;
 import com.zen.android.brite.BriteDataProvider;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * DbflowDataProvider
@@ -34,19 +30,9 @@ enum DbflowDataProvider implements BriteDataProvider {
 
     private SQLiteOpenHelper getSQLiteOpenHelper(DatabaseDefinition definition) {
         SQLiteOpenHelper helper = null;
-        try {
-            Method method = DatabaseDefinition.class.getDeclaredMethod("getHelper");
-            method.setAccessible(true);
-            OpenHelper openHelper = (OpenHelper) method.invoke(definition);
-            if (openHelper instanceof SQLiteOpenHelper) {
-                helper = (SQLiteOpenHelper) openHelper;
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+        OpenHelper openHelper = definition.getHelper();
+        if (openHelper instanceof SQLiteOpenHelper) {
+            helper = (SQLiteOpenHelper) openHelper;
         }
         return helper;
     }

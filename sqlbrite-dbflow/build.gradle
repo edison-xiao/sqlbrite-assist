@@ -17,6 +17,7 @@ dependencies {
     compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
     compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
 
+    testApt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
     testCompile test.junit
     testCompile test.robolectric
 }

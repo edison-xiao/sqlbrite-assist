@@ -1,6 +1,5 @@
 package com.zen.android.brite.dbflow;
 
-import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
