@@ -15,21 +15,22 @@ import java.util.Date;
  * @version 2016/7/12
  */
 @Table(name = "Weather", database = TestDatabase.class)
-public class Weather extends BaseModel{
+public class Weather extends BaseModel {
 
-    public enum  Type{
+    public enum Type {
         Sunny, Cloudy;
     }
 
+    @PrimaryKey
+    private int    idx;
     @Column
-    private int temperature;
+    private int    temperature;
     @Column
     private String city;
     @Column
-    @PrimaryKey
-    private Date day;
+    private Date   day;
     @Column
-    private Type type;
+    private Type   type;
 
     public Weather() {
     }
@@ -39,6 +40,14 @@ public class Weather extends BaseModel{
         this.city = city;
         this.day = day;
         this.type = type;
+    }
+
+    public int getIdx() {
+        return idx;
+    }
+
+    public void setIdx(int idx) {
+        this.idx = idx;
     }
 
     public int getTemperature() {

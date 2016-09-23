@@ -27,8 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @version 2016/4/28
  */
 @RunWith(RxJavaTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = IConfig.SDK_LEVEL,
-        manifest = IConfig.MANIFEST_PATH)
+@Config(constants = BuildConfig.class)
 public class BriteTest {
 
     private String mDatabaseName;
