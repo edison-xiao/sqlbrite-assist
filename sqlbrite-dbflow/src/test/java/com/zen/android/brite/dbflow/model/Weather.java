@@ -21,8 +21,8 @@ public class Weather extends BaseModel {
         Sunny, Cloudy;
     }
 
-    @PrimaryKey
-    private int    idx;
+    @PrimaryKey(autoincrement = true)
+    private int    idx = -1;
     @Column
     private int    temperature;
     @Column

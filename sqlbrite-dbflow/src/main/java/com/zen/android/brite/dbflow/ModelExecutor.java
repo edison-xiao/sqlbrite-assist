@@ -1,10 +1,12 @@
 package com.zen.android.brite.dbflow;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.raizlabs.android.dbflow.structure.ModelAdapter;
+import com.raizlabs.android.dbflow.structure.database.DatabaseStatement;
 import com.squareup.sqlbrite.BriteDatabase;
 import com.zen.android.brite.Brite;
 
@@ -18,8 +20,10 @@ import rx.Observable;
  */
 class ModelExecutor<T extends BaseModel> {
 
-    private final BriteDatabase   mDatabase;
-    private final String          mTableName;
+    private static final int INSERT_FAILED = -1;
+
+    private final BriteDatabase mDatabase;
+    private final String mTableName;
     private final ModelAdapter<T> mAdapter;
 
     @SuppressWarnings("unchecked")
@@ -41,32 +45,31 @@ class ModelExecutor<T extends BaseModel> {
             insertModel(first);
             return;
         }
-
-        BriteDatabase.Transaction transaction = mDatabase.newTransaction();
-        try {
-            insertModel(first);
-            Observable.from(models)
-                    .filter(model -> model != null)
-                    .subscribe(this::insertModel);
-            transaction.markSuccessful();
-        } finally {
-            transaction.end();
-        }
+//        BriteDatabase.Transaction transaction = mDatabase.newTransaction();
+//        try {
+        insertModel(first);
+        Observable.from(models)
+                .filter(model -> model != null)
+                .subscribe(this::insertModel);
+//            transaction.markSuccessful();
+//        } finally {
+//            transaction.end();
+//        }
     }
 
     public void insert(@NonNull List<T> models) {
         if (models.isEmpty()) {
             return;
         }
-        BriteDatabase.Transaction transaction = mDatabase.newTransaction();
-        try {
-            Observable.from(models)
-                    .filter(model -> model != null)
-                    .subscribe(this::insertModel);
-            transaction.markSuccessful();
-        } finally {
-            transaction.end();
-        }
+//        BriteDatabase.Transaction transaction = mDatabase.newTransaction();
+//        try {
+        Observable.from(models)
+                .filter(model -> model != null)
+                .subscribe(this::insertModel);
+//            transaction.markSuccessful();
+//        } finally {
+//            transaction.end();
+//        }
     }
 
     @SuppressWarnings("unchecked")
@@ -189,11 +192,21 @@ class ModelExecutor<T extends BaseModel> {
     private void updateModel(@NonNull T model) {
         mDatabase.update(mTableName, DbflowUtils.createValues(model),
                 mAdapter.getPrimaryConditionClause(model).getQuery());
+        Log.d("Dbflow", "update model " + model.getClass());
     }
 
     private void insertModel(@NonNull T model) {
-        long id = mDatabase.insert(mTableName, DbflowUtils.createValues(model));
-        mAdapter.updateAutoIncrement(model, id);
+        DatabaseStatement ds = mAdapter.getInsertStatement();
+        mAdapter.bindToInsertStatement(ds, model);
+        long id = ds.executeInsert();
+        if (id != INSERT_FAILED) {
+            mAdapter.updateAutoIncrement(model, id);
+            mDatabase.update(mTableName, DbflowUtils.createValues(model),
+                    mAdapter.getPrimaryConditionClause(model).getQuery());
+        }
+//        long result = mDatabase.insert(mTableName, DbflowUtils.createValues(model));
+//        mAdapter.updateAutoIncrement(model, id);
+        Log.d("Dbflow", "insert model " + model.getClass() + " " + id + " -> " + id);
     }
 
     static String getTableNameBase(ModelAdapter adapter) {

@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import rx.functions.Action1;
+
 /**
  * DbflowBriteTest
  *
@@ -32,6 +34,7 @@ public class DbflowBriteTest {
     @Before
     public void setUp() throws Exception {
         FlowManager.init(new FlowConfig.Builder(RuntimeEnvironment.application).build());
+//        FlowManager.getDatabase(TestDatabase.DB_NAME).reset(RuntimeEnvironment.application);
 //        DbflowBrite.deleteAll(Weather.class);
     }
 
@@ -39,7 +42,7 @@ public class DbflowBriteTest {
     public void tearDown() throws Exception {
         FlowManager.getDatabase(TestDatabase.DB_NAME).reset(RuntimeEnvironment.application);
         FlowManager.destroy();
-
+//        Thread.sleep(200);
 //        Field field = FlowManager.class.getDeclaredField("mDatabaseHolder");
 //        field.setAccessible(true);
 //        field.set(null, null);
@@ -89,8 +92,8 @@ public class DbflowBriteTest {
         final int testSize = 3;
         for (int i = 0; i < testSize; i++) {
             Weather weather = new Weather(i + 1, "test_" + i, new Date(), Weather.Type.Sunny);
-            weather.insert();
-//            DbflowBrite.insert(weather);
+//            weather.insert();
+            DbflowBrite.insert(weather);
             System.out.println(weather.getIdx());
         }
 
@@ -100,6 +103,12 @@ public class DbflowBriteTest {
 
     @Test
     public void testSaveList() throws Exception {
+        DbflowBrite.Query.from(Weather.class)
+                .queryModels()
+                .subscribe(weathers -> {
+                    System.out.println(weathers.size());
+                });
+
         final int testSize = 10;
         List<Weather> source = new ArrayList<>();
         for (int i = 0; i < testSize; i++) {
