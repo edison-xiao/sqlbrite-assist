@@ -10,7 +10,6 @@ import com.zen.android.brite.Brite;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import rx.Observable;
 
