@@ -3,10 +3,10 @@ package com.zen.android.brite.dbflow;
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.raizlabs.android.dbflow.sql.language.Select;
+import com.zen.android.brite.BriteTestHelper;
 import com.zen.android.brite.dbflow.model.Weather;
 import com.zen.android.brite.dbflow.model.Weather_Table;
-import com.zen.android.brite.dbflow.util.RxJavaTestRunner;
+import com.zen.android.brite.dbflow.util.TestRunner;
 
 import junit.framework.Assert;
 
@@ -29,20 +29,20 @@ import java.util.concurrent.TimeUnit;
  * @author yangz
  * @version 2016/7/12
  */
-@RunWith(RxJavaTestRunner.class)
+@RunWith(TestRunner.class)
 @Config(constants = com.zen.android.brite.BuildConfig.class, sdk = IConfig.SDK_LEVEL,
         manifest = IConfig.MANIFEST_PATH)
 public class DbflowBriteTest {
 
     @Before
     public void setUp() throws Exception {
+        BriteTestHelper.resetBrite();
         FlowManager.init(new FlowConfig.Builder(RuntimeEnvironment.application).build());
         FlowManager.getDatabase(TestDatabase.DB_NAME).reset(RuntimeEnvironment.application);
     }
 
     @After
     public void tearDown() throws Exception {
-        DbflowBrite.deleteAll(Weather.class);
         FlowManager.destroy();
     }
 

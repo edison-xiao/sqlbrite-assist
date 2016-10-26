@@ -8,7 +8,7 @@ import com.squareup.sqlbrite.QueryObservable;
 import com.squareup.sqlbrite.SqlBrite;
 import com.zen.android.brite.db.BriteDataProviderImpl;
 import com.zen.android.brite.db.SqliteOpenHelperImpl;
-import com.zen.android.brite.util.RxJavaTestRunner;
+import com.zen.android.brite.util.TestRunner;
 import com.zen.android.brite.util.RxTestUtils;
 
 import junit.framework.Assert;
@@ -26,8 +26,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author zen
  * @version 2016/4/28
  */
-@RunWith(RxJavaTestRunner.class)
-@Config(constants = BuildConfig.class)
+@RunWith(TestRunner.class)
+@Config(constants = BuildConfig.class, sdk = IConfig.SDK_LEVEL)
 public class BriteTest {
 
     private String mDatabaseName;

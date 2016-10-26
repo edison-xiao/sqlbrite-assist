@@ -21,6 +21,11 @@ public class Brite {
         }
     }
 
+    /* package accessible for unit tests */
+    static void reset(){
+        BriteHelper.INSTANCE.reset();
+    }
+
     public static BriteDatabase getDatabase(String dbName) {
         return BriteHelper.INSTANCE.getBriteDatabase(dbName);
     }

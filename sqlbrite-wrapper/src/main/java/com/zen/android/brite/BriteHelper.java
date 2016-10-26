@@ -43,6 +43,12 @@ enum BriteHelper {
     BriteHelper() {
     }
 
+    /* package accessible for unit tests */
+    void reset(){
+        mDatabaseHashMap.clear();
+        mResolverHashMap.clear();
+    }
+
     public void addDataProvider(BriteDataProvider provider) {
         if (!mDataProviders.contains(provider)) {
             mDataProviders.add(provider);
