@@ -30,14 +30,6 @@ public class TestRunner extends RobolectricTestRunner {
      */
     public TestRunner(Class<?> testClass) throws InitializationError {
         super(testClass);
-
-//        RxJavaTestPlugins.resetPlugins();
-        RxJavaPlugins.getInstance().registerSchedulersHook(new RxJavaSchedulersHook() {
-            @Override
-            public Scheduler getIOScheduler() {
-                return Schedulers.immediate();
-            }
-        });
     }
 
     private static final String BUILD_OUTPUT = "build/intermediates";
