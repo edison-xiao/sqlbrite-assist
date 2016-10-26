@@ -45,31 +45,31 @@ class ModelExecutor<T extends BaseModel> {
             insertModel(first);
             return;
         }
-//        BriteDatabase.Transaction transaction = mDatabase.newTransaction();
-//        try {
-        insertModel(first);
-        Observable.from(models)
-                .filter(model -> model != null)
-                .subscribe(this::insertModel);
-//            transaction.markSuccessful();
-//        } finally {
-//            transaction.end();
-//        }
+        BriteDatabase.Transaction transaction = mDatabase.newTransaction();
+        try {
+            insertModel(first);
+            Observable.from(models)
+                    .filter(model -> model != null)
+                    .subscribe(this::insertModel);
+            transaction.markSuccessful();
+        } finally {
+            transaction.end();
+        }
     }
 
     public void insert(@NonNull List<T> models) {
         if (models.isEmpty()) {
             return;
         }
-//        BriteDatabase.Transaction transaction = mDatabase.newTransaction();
-//        try {
-        Observable.from(models)
-                .filter(model -> model != null)
-                .subscribe(this::insertModel);
-//            transaction.markSuccessful();
-//        } finally {
-//            transaction.end();
-//        }
+        BriteDatabase.Transaction transaction = mDatabase.newTransaction();
+        try {
+            Observable.from(models)
+                    .filter(model -> model != null)
+                    .subscribe(this::insertModel);
+            transaction.markSuccessful();
+        } finally {
+            transaction.end();
+        }
     }
 
     @SuppressWarnings("unchecked")

@@ -2,7 +2,10 @@ package com.zen.android.brite.dbflow;
 
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.sql.language.Select;
 import com.zen.android.brite.dbflow.model.Weather;
+import com.zen.android.brite.dbflow.model.Weather_Table;
 import com.zen.android.brite.dbflow.util.RxJavaTestRunner;
 
 import junit.framework.Assert;
@@ -17,8 +20,8 @@ import org.robolectric.annotation.Config;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import rx.functions.Action1;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * DbflowBriteTest
@@ -34,109 +37,182 @@ public class DbflowBriteTest {
     @Before
     public void setUp() throws Exception {
         FlowManager.init(new FlowConfig.Builder(RuntimeEnvironment.application).build());
-//        FlowManager.getDatabase(TestDatabase.DB_NAME).reset(RuntimeEnvironment.application);
-//        DbflowBrite.deleteAll(Weather.class);
+        FlowManager.getDatabase(TestDatabase.DB_NAME).reset(RuntimeEnvironment.application);
     }
 
     @After
     public void tearDown() throws Exception {
-        FlowManager.getDatabase(TestDatabase.DB_NAME).reset(RuntimeEnvironment.application);
+        DbflowBrite.deleteAll(Weather.class);
         FlowManager.destroy();
-//        Thread.sleep(200);
-//        Field field = FlowManager.class.getDeclaredField("mDatabaseHolder");
-//        field.setAccessible(true);
-//        field.set(null, null);
     }
 
     @Test
     public void testInsert() throws Exception {
-//        Weather weather = new Weather(30, "fuzhou", new Date(), Weather.Type.Sunny);
-//        DbflowBrite.insert(weather);
-//
-//        weather.insert();
+        int insertSize = 10;
+        int[] notifyCount = {insertSize + 3, 0};
+        int totalCount = 0;
 
-        for (int i = 0; i < 20; i++) {
-            new Weather(30, "fuzhou", new Date(), Weather.Type.Sunny).insert();
+        CountDownLatch latch = new CountDownLatch(notifyCount[0]);
+        DbflowBrite.Query.from(Weather.class)
+                .queryModels()
+                .subscribe(weathers -> {
+                    notifyCount[1]++;
+                    latch.countDown();
+                });
+
+        for (int i = 0; i < insertSize; i++) {
+            DbflowBrite.insert(new Weather(i, "fuzhou", new Date(), Weather.Type.Sunny));
         }
+        totalCount += insertSize;
 
-//        for (int i = 0; i < 2; i++) {
-//            DbflowBrite.insert(new Weather(i+20, "fuzhou", new Date(), Weather.Type.Sunny));
-//        }
+        List<Weather> src = new ArrayList<>();
+        for (int i = 0; i < insertSize; i++) {
+            src.add(new Weather(i, "fuzhou", new Date(), Weather.Type.Sunny));
+        }
+        totalCount += insertSize;
+        DbflowBrite.insert(Weather.class, src);
+
+        Weather[] ws = new Weather[3];
+        for (int i = 0; i < 3; i++) {
+            ws[i] = new Weather(i, "ff", new Date(), Weather.Type.Cloudy);
+        }
+        totalCount += 3;
+        DbflowBrite.insert(ws[0], ws[1], ws[2]);
 
 
         List<Weather> weathers = getAllWeather();
-        Assert.assertEquals(weathers.size(), 22);
+        Assert.assertEquals(weathers.size(), totalCount);
 
-        Weather target = weathers.get(0);
-//        Assert.assertFalse(target == weather);
-//        Assert.assertEquals(target, weather);
+        Weather target = weathers.get(weathers.size() - 1);
+        Assert.assertEquals(target.getIdx(), weathers.size());
 
-        System.out.println(target.getIdx());
+        latch.await(1000, TimeUnit.MILLISECONDS);
+        Assert.assertEquals(notifyCount[0], notifyCount[1]);
     }
 
     @Test
     public void testSave() throws Exception {
-        Weather weather = new Weather(20, "cc", new Date(), Weather.Type.Sunny);
-        DbflowBrite.save(weather);
+        int saveSize = 10;
+        int[] notifyCount = {saveSize + 3, 0};
+        int totalCount = 0;
 
-        List<Weather> weathers = getAllWeather();
-        Assert.assertEquals(weathers.size(), 1);
-
-        Weather target = weathers.get(0);
-        Assert.assertFalse(target == weather);
-        Assert.assertEquals(target, weather);
-    }
-
-    @Test
-    public void testSaveModels() throws Exception {
-        final int testSize = 3;
-        for (int i = 0; i < testSize; i++) {
-            Weather weather = new Weather(i + 1, "test_" + i, new Date(), Weather.Type.Sunny);
-//            weather.insert();
-            DbflowBrite.insert(weather);
-            System.out.println(weather.getIdx());
-        }
-
-        List<Weather> weathers = getAllWeather();
-        Assert.assertEquals(weathers.size(), testSize);
-    }
-
-    @Test
-    public void testSaveList() throws Exception {
+        CountDownLatch latch = new CountDownLatch(notifyCount[0]);
         DbflowBrite.Query.from(Weather.class)
                 .queryModels()
                 .subscribe(weathers -> {
-                    System.out.println(weathers.size());
+                    notifyCount[1]++;
+                    latch.countDown();
                 });
 
-        final int testSize = 10;
-        List<Weather> source = new ArrayList<>();
-        for (int i = 0; i < testSize; i++) {
-            source.add(new Weather(i + 1, "test_" + i, new Date(), Weather.Type.Sunny));
+        for (int i = 0; i < saveSize; i++) {
+            DbflowBrite.save(new Weather(i, "fuzhou", new Date(), Weather.Type.Sunny));
         }
+        totalCount += saveSize;
 
-        Weather[] copy = new Weather[source.size()];
-        source.toArray(copy);
+        List<Weather> src = new ArrayList<>();
+        for (int i = 0; i < saveSize; i++) {
+            src.add(new Weather(i, "fuzhou", new Date(), Weather.Type.Sunny));
+        }
+        totalCount += saveSize;
+        DbflowBrite.save(Weather.class, src);
 
-        DbflowBrite.save(new Weather(100, "test_100", new Date(), Weather.Type.Cloudy), copy);
+        Weather[] ws = new Weather[3];
+        for (int i = 0; i < 3; i++) {
+            ws[i] = new Weather(i, "ff", new Date(), Weather.Type.Cloudy);
+        }
+        totalCount += 3;
+        DbflowBrite.save(ws[0], ws[1], ws[2]);
+
 
         List<Weather> weathers = getAllWeather();
-        Assert.assertEquals(weathers.size(), testSize + 1);
+        Assert.assertEquals(weathers.size(), totalCount);
+
+        Weather target = weathers.get(weathers.size() - 1);
+        Assert.assertEquals(target.getIdx(), weathers.size());
+
+        latch.await(1000, TimeUnit.MILLISECONDS);
+        Assert.assertEquals(notifyCount[0], notifyCount[1]);
     }
 
     @Test
-    public void testInsertList() throws Exception {
-        final int testSize = 10;
-        List<Weather> source = new ArrayList<>();
-        for (int i = 0; i < testSize; i++) {
-            source.add(new Weather(i + 1, "test_" + i, new Date(), Weather.Type.Sunny));
+    public void testUpdate() throws Exception {
+        int saveSize = 10;
+        int[] notifyCount = {saveSize * 2 + 3, 0};
+
+        CountDownLatch latch = new CountDownLatch(notifyCount[0]);
+
+        String sql = SQLite.select().from(Weather.class)
+                .where(Weather_Table.temperature.lessThan(30))
+                .toString();
+
+        DbflowBrite.Query.from(Weather.class)
+                .sql(sql)
+                .queryModels()
+                .subscribe(weathers -> {
+                    notifyCount[1]++;
+                    latch.countDown();
+                });
+
+        for (int i = 0; i < saveSize; i++) {
+            DbflowBrite.save(new Weather(i, "fuzhou", new Date(), Weather.Type.Sunny));
         }
 
-        DbflowBrite.insert(Weather.class, source);
+        List<Weather> weathers = getAllWeather();
+        for (Weather weather : weathers) {
+            weather.setCity("xiamen");
+            DbflowBrite.update(weather);
+        }
+
+        for (Weather weather : weathers) {
+            weather.setCity("fujian");
+        }
+        DbflowBrite.update(Weather.class, weathers);
+
+        weathers.get(0).setType(Weather.Type.Cloudy);
+        weathers.get(1).setType(Weather.Type.Cloudy);
+        DbflowBrite.update(weathers.get(0), weathers.get(1));
+
+        latch.await(1000, TimeUnit.MILLISECONDS);
+        Assert.assertEquals(notifyCount[0], notifyCount[1]);
+
+        weathers = getAllWeather();
+        for (Weather weather : weathers) {
+            Assert.assertEquals(weather.getCity(), "fujian");
+        }
+    }
+
+    @Test
+    public void testDelete() throws Exception {
+        int saveSize = 10;
+        int[] notifyCount = {saveSize + 4, 0};
+
+        CountDownLatch latch = new CountDownLatch(notifyCount[0]);
+        DbflowBrite.Query.from(Weather.class)
+                .queryModels()
+                .subscribe(weathers -> {
+                    notifyCount[1]++;
+                    latch.countDown();
+                });
+
+        for (int i = 0; i < saveSize; i++) {
+            DbflowBrite.save(new Weather(i, "fuzhou", new Date(), Weather.Type.Sunny));
+        }
 
         List<Weather> weathers = getAllWeather();
-        Assert.assertEquals(weathers.size(), testSize);
+        DbflowBrite.delete(weathers.get(0));
+        DbflowBrite.delete(weathers.get(1), weathers.get(2));
+
+        weathers = getAllWeather();
+        Assert.assertEquals(weathers.size(), saveSize - 3);
+
+        DbflowBrite.delete(Weather.class, weathers);
+        weathers = getAllWeather();
+        Assert.assertEquals(weathers.size(), 0);
+
+        latch.await(1000, TimeUnit.MILLISECONDS);
+        Assert.assertEquals(notifyCount[0], notifyCount[1]);
     }
+
 
     private List<Weather> getAllWeather() {
         return DbflowBrite.Query.from(Weather.class).queryModels()
