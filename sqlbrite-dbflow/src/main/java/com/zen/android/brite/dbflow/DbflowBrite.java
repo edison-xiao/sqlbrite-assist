@@ -1,6 +1,5 @@
 package com.zen.android.brite.dbflow;
 
-import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
@@ -22,11 +21,27 @@ import rx.Observable;
  */
 public class DbflowBrite {
 
+    static boolean hasInit = false;
+    static final Object SYNC = new Object();
+
     static {
-        Brite.setupProviders(DbflowDataProvider.INSTANCE);
+        init();
+    }
+
+    private static void init() {
+        if (!hasInit) {
+            synchronized (SYNC) {
+                Brite.setupProviders(DbflowDataProvider.INSTANCE);
+                hasInit = true;
+            }
+        }
     }
 
     public static class Query<T extends BaseModel> extends Brite.Query<T> {
+
+        static {
+            init();
+        }
 
         private Class<T> mClazz;
 

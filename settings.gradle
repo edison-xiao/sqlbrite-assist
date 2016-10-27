@@ -1,1 +1,2 @@
 include ':sqlbrite-wrapper', ':sqlbrite-dbflow'
+//include ':sqlbrite-dbflow-test'

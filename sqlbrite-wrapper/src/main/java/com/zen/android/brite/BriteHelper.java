@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import rx.Observable;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -24,20 +26,27 @@ enum BriteHelper {
 
     INSTANCE;
 
-    private final SqlBrite                              mSqlBrite        = SqlBrite.create(new Logger());
-    private final HashMap<String, BriteDatabase>        mDatabaseHashMap = new HashMap<>();
+    private final SqlBrite mSqlBrite = SqlBrite.create(new Logger());
+    private final HashMap<String, BriteDatabase> mDatabaseHashMap = new HashMap<>();
     private final HashMap<String, BriteContentResolver> mResolverHashMap = new HashMap<>();
-    private final Set<BriteDataProvider>                mDataProviders   = new HashSet<>();
+    private final Set<BriteDataProvider> mDataProviders = new HashSet<>();
 
     private static class Logger implements SqlBrite.Logger {
 
         @Override
         public void log(String message) {
             Log.d("zSqlBrite", message);
+//            System.out.println("zSqlBrite " + message);
         }
     }
 
     BriteHelper() {
+    }
+
+    /* package accessible for unit tests */
+    void reset(){
+        mDatabaseHashMap.clear();
+        mResolverHashMap.clear();
     }
 
     public void addDataProvider(BriteDataProvider provider) {
@@ -50,7 +59,9 @@ enum BriteHelper {
         for (BriteDataProvider provider : mDataProviders) {
             SQLiteOpenHelper helper = provider.findDatabaseByName(dbName);
             if (helper != null) {
-                return mSqlBrite.wrapDatabaseHelper(helper, Schedulers.io());
+                BriteDatabase bd = mSqlBrite.wrapDatabaseHelper(helper, Schedulers.io());
+                bd.setLoggingEnabled(true);
+                return bd;
             }
         }
         return null;

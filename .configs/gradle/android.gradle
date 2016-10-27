@@ -3,14 +3,13 @@
 // update: 2016021701
 
 android {
-    def conf = this.ext;
-    compileSdkVersion conf.androidCompileSdkVersion
-    buildToolsVersion conf.androidBuildToolsVersion
+    compileSdkVersion androidCompileSdkVersion
+    buildToolsVersion androidBuildToolsVersion
 
     defaultConfig {
-        minSdkVersion conf.androidMinSdkVersion
-        targetSdkVersion conf.androidTargetSdkVersion
-        testInstrumentationRunner conf.testInstrumentationRunner
+        minSdkVersion androidMinSdkVersion
+        targetSdkVersion androidTargetSdkVersion
+        testInstrumentationRunner testInstrumentationRunner
     }
 
     packagingOptions {
@@ -30,4 +29,25 @@ android {
         disable 'IconDensities'             //For testing purpose. This is safe to remove.
         disable 'IconMissingDensityFolder'  //For testing purpose. This is safe to remove.
     }
+}
+
+// for gradle plugin 2.2.0 and Robolectric 3.1.x
+
+task copyFilesDebug(type: Copy) {
+    description = 'Fix Robolectric looks wrong place for AndroidManifest.xml by copying file...'
+    from 'build/intermediates/manifests/aapt/debug'
+    into 'build/intermediates/manifests/full/debug'
+    include 'AndroidManifest.xml'
+}
+
+task copyFilesRelease(type: Copy) {
+    description = 'Fix Robolectric looks wrong place for AndroidManifest.xml by copying file...'
+    from 'build/intermediates/manifests/aapt/release'
+    into 'build/intermediates/manifests/full/release'
+    include 'AndroidManifest.xml'
+}
+
+project.afterEvaluate {
+    testDebugUnitTest.dependsOn copyFilesDebug
+    testReleaseUnitTest.dependsOn copyFilesRelease
 }
