@@ -12,7 +12,15 @@
 ### 依赖配置
 
 ```gradle
-    compile 'com.github.znyang.sqlbrite-assist:sqlbrite-dbflow:0.1'
+    repositories {
+        jcenter()
+        maven { url "https://jitpack.io" }
+    }
+
+    dependencies {
+        compile 'com.github.znyang.sqlbrite-assist:sqlbrite-dbflow:0.1'
+        apt "com.github.Raizlabs.DBFlow:dbflow-processor:3.1.1"
+    }
 ```
 
 ### 一个例子
